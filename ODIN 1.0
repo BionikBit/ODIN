@@ -1,0 +1,178 @@
+
+
+
+#chars used as spin tags
+def SpinTags():
+    return ['0','a','1','b','2','c','3','d','4','e','5','f','6','g','7','h','8','i','9','j','l','k','m','o','n','p','r','q','s','u','t','v','x','w','z','y',' ','!','@','#','$','%','^','&','*','(',')','-','_','=','+','/',';',':','|','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
+#available chars
+def CharList():
+    return ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',' ','0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',',','.','!','"',"'",'£','$','%','€','^','&','*',')','(','_','-','=','+','@','{','}','[',']','#']
+
+#letters(char) -----> numbers
+def LettersToNumbers(conversion):
+    list = CharList()
+    for i in range(len(list)):
+        if conversion == list[i]:
+            converted = i+1
+            break
+    return(converted)
+
+#numbers ----> letters(char)
+def NumbersToLetters(transfer):
+    Crypted = None
+    list = CharList()
+    if transfer == ' ':
+        Crypted = ' '
+    elif transfer <= len(list):
+        Crypted = list[int(transfer) - 1]
+    return(Crypted)
+
+#making the spin tags
+def Spin(turns):
+    u = 0
+    SendBack = []
+    list = SpinTags()
+    while(True):
+        if turns == u:
+            break
+        else:
+            u += 1
+    SendBack = list[u]
+    return(SendBack)
+
+#decoding spin tags
+def UnSpin(turns):
+    list = SpinTags()
+    for i in range(len(list)):
+        if turns == list[i]:
+            SendBack = i
+            break
+    return(SendBack)
+
+#the main code that will be refernced if user wants to reuse
+def MainCode(choice):
+
+    UserInput = input('Encrypt(1), Decrypt(2) or Testing Grounds(3):')
+    Result = None
+    #decrypting
+    if UserInput == '1':
+        
+        #reusing previous output
+        if choice == None:
+            ToConvert = input('Enter phrase to crypt:')
+        else:    
+            ToConvert = choice
+
+        #vars
+        MiddleWord = []
+        FinalWord = []
+        CaseCycle = 0
+        Crypted = 0
+        PreviousChar = 0
+        multiplicative = input('Enter a multiplicative:')
+        additive = input('Enter an additive:')
+
+        #converting the chars in useable nums
+        for i in range(len(ToConvert)):
+            MiddleWord.append(LettersToNumbers(ToConvert[i]))   
+        for i in range(len(MiddleWord)):
+            spin = 0
+            spun = []
+        
+            #calculation/crypting
+            Crypted = int(multiplicative) * (int(MiddleWord[CaseCycle]) + int(PreviousChar)) + int(additive)
+        
+            #making the spin tag
+            while Crypted > len(CharList()):
+                Crypted -= len(CharList())
+                spin += 1
+            spun = Spin(spin)
+        
+            #appending to final phrase    
+            unclear = NumbersToLetters(Crypted)
+            FinalWord.append(spun)
+            FinalWord.append(unclear)
+
+            #preparing for next run
+            PreviousChar = Crypted
+            CaseCycle += 1
+
+        print("".join(FinalWord))
+        Result = FinalWord       
+
+    #decrypt
+    elif UserInput == '2':
+
+        #reusing previous output
+        if  choice == None:
+            code = input('Enter a phrase to decrypt:')
+        else:
+            code = choice
+
+        #vars
+        multiplicative = input('Enter the multiplicative:')
+        additive =  input('Enter the additive:')
+        FinalWordPwd = []
+        result = 0
+        cleared = 0
+        spin = 0
+        calculate = 0
+        pastDigit = 0
+
+        #reading spin tags
+        for i in range(len(code)):
+            if i % 2 == 0:
+                spin = UnSpin(code[i])
+                continue
+
+            #decrypting
+            calculate = LettersToNumbers(code[i])
+            cleared = ((int(calculate) + (len(CharList()) * spin)) - int(additive)) / int(multiplicative) - int(pastDigit)
+            result = NumbersToLetters(cleared)
+
+            #appending results
+            FinalWordPwd.append(result)
+            pastDigit = calculate
+        print("".join(FinalWordPwd))
+        Result = FinalWordPwd
+
+    #testing ground
+    elif UserInput == '3':
+         var = 0
+         var += 1
+    
+
+    else:
+        print('Unable to find any directory matching this command.')
+    return(Result)
+
+ask = True
+
+Answer = MainCode(None) 
+while (ask):
+       
+    reuse = input('Would you like to reuse the algorithm?: yes(y) or no(n):')
+
+    if reuse == 'y':
+        saveWord = input('Would you like to reuse the previous output?: yes(y) or no(n):')
+
+        if saveWord == 'y':
+            MainCode(Answer)
+
+        elif saveWord == 'n':
+            MainCode(None)
+
+        else:
+            print('Unable to find any directory matching this command.')
+            break
+
+    elif reuse == 'n':
+        ask = False
+
+    else:
+        print('Unable to find any directory matching this command.')
+        break
+
+
+
